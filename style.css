@@ -1,0 +1,38 @@
+html {
+    font-family: sans-serif;
+}
+
+.centre {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.center {
+    margin-left: 32.5%;
+}
+
+.board {
+    user-select: none;
+    border-color: #000000;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: #1D60F2;
+    max-width: fit-content;
+    /* transform: scale(.75); */
+}
+
+.position {
+    margin: 5px;
+    padding: 30px;
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+    background-color: #ffffff;
+    border-radius: 100px;
+}
+
+/* .position:hover {
+    background-color: #ffff00;
+} */
