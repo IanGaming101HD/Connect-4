@@ -9,15 +9,19 @@ function formatText(text) {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
+function info(title, message) {
+  alert(`${title}\n${message}`)
+}
+
 function draw() {
   console.log('draw')
-  // info('Draw', 'It was a draw!')
+  info('Draw', 'It was a draw!')
   clearBoard()
 }
 
 function win(colour) {
   console.log('win')
-  // info('Win', `Winner: ${formatText(colour)}`)
+  info('Win', `Winner: ${formatText(colour)}`)
   clearBoard()
 }
 
@@ -85,7 +89,6 @@ function checkDiagonals(x, y, colour) {
 }
 
 function checkBoard(x, y, colour) {
-  console.log('check diagnols', checkDiagonals(x, y, colour));
   if (checkColumn(x, colour) || checkRow(y, colour) || checkDiagonals(x, y, colour)) {
     win(colour)
     return null
