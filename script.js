@@ -11,23 +11,22 @@ function formatText(text) {
 
 function draw() {
   console.log('draw')
-    // info('Draw', 'It was a draw!')
-    clearBoard()
+  // info('Draw', 'It was a draw!')
+  clearBoard()
 }
 
 function win(colour) {
   console.log('win')
-  // info('Winner', f'Winner: {formatString(colour)}')
+  // info('Win', `Winner: ${formatText(colour)}`)
   clearBoard()
 }
 
 function clearBoard() {
   positions.forEach((pos) => {
-    if (Object.values(colours.includes(getComputedStyle(pos).getPropertyValue('background-color')))) {
+    if (Object.values(colours).includes(convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color')))) {
       pos.style.backgroundColor = '#FFFFFF';
     }
   })
-
 }
 
 function checkColumn(x, colour) {
@@ -40,7 +39,7 @@ function checkColumn(x, colour) {
         return true
       }
     } else {
-      consecutive = 0
+      consecutiveColours = 0
     }
   })
   return hasFourConsecutiveColours
@@ -49,41 +48,51 @@ function checkColumn(x, colour) {
 function checkRow(y, colour) {
   let rowPositions = positions.filter((pos) => pos.id.charAt(1) === y).sort((a, b) => (a.id > b.id ? 1 : b.id > a.id ? -1 : 0));
   let consecutiveColours = 0
-  let hasFourConsecutiveColours =  rowPositions.some((pos) => {
+  let hasFourConsecutiveColours = rowPositions.some((pos) => {
     if (convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color')) === colours[colour]) {
       consecutiveColours += 1
       if (consecutiveColours >= 4) {
         return true
       }
     } else {
-      consecutive = 0
+      consecutiveColours = 0
     }
   })
   return hasFourConsecutiveColours
 }
 
 function checkDiagonals(x, y, colour) {
-  return false
+  let startX = x.charCodeAt(0) - 'a'.charCodeAt(0);
+  let startY = parseInt(y) - 1;
 
-  // for x in [-1, 1]:
-  //   consecutiveColours = 0
-  //   for y in range(-4, 5):
-  //       if verifyPixelExists(column + (y * x), row + y) and waffle.get_pixel(column + (y * x), row + y) == colour:
-  //         consecutiveColours += 1
-  //         if consecutiveColours >= 4:
-  //             return True
-  //       else:
-  //         consecutiveColours = 0
-  // return False
+  function checkDirection(deltaX, deltaY) {
+    let consecutiveColours = 0;
+    for (let i = -3; i <= 3; i++) {
+      let currentX = String.fromCharCode(startX + deltaX * i + 'a'.charCodeAt(0));
+      let currentY = (startY + deltaY * i + 1).toString();
+      if (currentX < 'a' || currentX > 'g' || currentY < '1' || currentY > '6') continue;
+      let pos = positions.find(p => p.id === currentX + currentY);
+      if (pos && convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color')) === colours[colour]) {
+        consecutiveColours += 1;
+        if (consecutiveColours >= 4) return true;
+      } else {
+        consecutiveColours = 0;
+      }
+    }
+    return false;
+  }
+  return checkDirection(1, 1) || checkDirection(-1, 1) || checkDirection(1, -1) || checkDirection(-1, -1);
 }
 
 function checkBoard(x, y, colour) {
+  console.log('check diagnols', checkDiagonals(x, y, colour));
   if (checkColumn(x, colour) || checkRow(y, colour) || checkDiagonals(x, y, colour)) {
     win(colour)
+    return null
   }
 
   let possiblePositions = positions.filter((pos) => !Object.values(colours).includes(convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color'))))
-  if (!possiblePositions) {
+  if (possiblePositions.length === 0) {
     draw()
   }
 }
