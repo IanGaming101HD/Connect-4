@@ -115,8 +115,8 @@ function checkBoard(x, y, colour) {
 function placePiece(position) {
   let column = positions.filter((pos) => pos.id.charAt(0) === position.id.charAt(0) && !Object.values(colours).includes(convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color')))).sort((a, b) => (a.id > b.id ? 1 : b.id > a.id ? -1 : 0));
   if (column && column.length !== 0) {
+    let hoverPiece = document.getElementById(`hover-piece-${position.id.charAt(0)}`)
     let colour = sessionStorage.getItem('ColoursTurn');
-
     let newPosition = column[0]
     newPosition.style.backgroundColor = colours[colour];
 
@@ -126,6 +126,7 @@ function placePiece(position) {
       sessionStorage.setItem('ColoursTurn', 'red');
     }
     checkBoard(newPosition.id.charAt(0), newPosition.id.charAt(1), colour)
+    hoverPiece.style.backgroundColor = sessionStorage.getItem('ColoursTurn')
   }
 }
 
@@ -144,15 +145,22 @@ function convertRgbToHex(rgba) {
 }
 
 function onHover(position) {
-  console.log(position)
-  let column = position[0]
-  let hoverPiece = document.getElementById(`hover-piece-${column}`)
+  let hoverPiece = document.getElementById(`hover-piece-${position.id.charAt(0)}`)
+  let colour = sessionStorage.getItem('ColoursTurn')
   hoverPiece.style.visibility = 'visible'
+  hoverPiece.style.backgroundColor = colour
+}
+
+function onHoverLeave(position) {
+  let hoverPiece = document.getElementById(`hover-piece-${position.id.charAt(0)}`)
+  hoverPiece.style.visibility = 'hidden'
+  hoverPiece.style.backgroundColor = 'transparent'
 }
 
 positions.forEach((position) => {
   position.addEventListener('click', (event) => placePiece(position));
   position.addEventListener('mouseover', (event) => onHover(position));
+  position.addEventListener('mouseleave', (event) => onHoverLeave(position));
 });
 
 [closeButton, continueButton].forEach((button) => button.addEventListener('click', (event) => {
