@@ -3,12 +3,21 @@
 <html>
   <head>
     <title>Connect 4</title>
-    <link rel='stylesheet' href='./style.css' />
+    <link rel='stylesheet' href='./style.css'/>
   </head>
   <body>
     <div class='container'>
       <h1 class='centre'>Connect 4</h1>
-      <div class='game-container center'>
+      <div class='game-container centre'>
+        <div class='hover-pieces'>
+          <div id='hover-piece-a' class='hover-piece'></div>
+          <div id='hover-piece-b' class='hover-piece'></div>
+          <div id='hover-piece-c' class='hover-piece'></div>
+          <div id='hover-piece-d' class='hover-piece'></div>
+          <div id='hover-piece-e' class='hover-piece'></div>
+          <div id='hover-piece-f' class='hover-piece'></div>
+          <div id='hover-piece-g' class='hover-piece'></div>
+        </div>
         <div class='board'>
           <button id='a6' class='position'></button>
           <button id='b6' class='position'></button>
@@ -57,6 +66,16 @@
           <button id='e1' class='position'></button>
           <button id='f1' class='position'></button>
           <button id='g1' class='position'></button>
+        </div>
+        <div id='popup-container' class='popup-container' hidden>
+          <div class='popup-head'>
+            <h2 id='popup-header' class='popup-header centre'>Game has ended!</h2>
+            <button id='close-button' class='close-button'>⨉</button>
+          </div>
+          <div class='popup-body'>
+            <p id='popup-paragraph' class='popup-paragraph'>$colour has won!</p>
+            <button id='continue-button' class='continue-button'>CONTINUE</button>
+          </div>
         </div>
       </div>
     </div>

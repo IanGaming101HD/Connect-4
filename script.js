@@ -1,28 +1,40 @@
 let positions = Array.from(document.getElementsByClassName('position'));
+let closeButton = document.getElementById('close-button');
+let continueButton = document.getElementById('continue-button');
+let popupContainer = document.getElementById('popup-container');
 let colours = {
   red: '#FF0000',
   yellow: '#FFFF00'
 };
-localStorage.setItem('ColoursTurn', 'red');
+sessionStorage.setItem('ColoursTurn', 'red');
 
 function formatText(text) {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
-function info(title, message) {
-  alert(`${title}\n${message}`)
+function displayPopup(title, message) {
+  let popupHeader = document.getElementById('popup-header');
+  let popupParagraph = document.getElementById('popup-paragraph');
+  popupHeader.innerText = title
+  popupParagraph.innerText = message
+  popupContainer.hidden = false
+  lockBoard()
 }
 
 function draw() {
-  console.log('draw')
-  info('Draw', 'It was a draw!')
-  clearBoard()
+  displayPopup('Draw', 'It was a draw!')
 }
 
 function win(colour) {
-  console.log('win')
-  info('Win', `Winner: ${formatText(colour)}`)
-  clearBoard()
+  displayPopup('Win', `Winner: ${formatText(colour)}`)
+}
+
+function lockBoard() {
+  positions.forEach((pos) => pos.disabled = true)
+}
+
+function unlockBoard() {
+  positions.forEach((pos) => pos.disabled = false)
 }
 
 function clearBoard() {
@@ -91,7 +103,7 @@ function checkDiagonals(x, y, colour) {
 function checkBoard(x, y, colour) {
   if (checkColumn(x, colour) || checkRow(y, colour) || checkDiagonals(x, y, colour)) {
     win(colour)
-    return null
+    return;
   }
 
   let possiblePositions = positions.filter((pos) => !Object.values(colours).includes(convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color'))))
@@ -103,14 +115,15 @@ function checkBoard(x, y, colour) {
 function placePiece(position) {
   let column = positions.filter((pos) => pos.id.charAt(0) === position.id.charAt(0) && !Object.values(colours).includes(convertRgbToHex(getComputedStyle(pos).getPropertyValue('background-color')))).sort((a, b) => (a.id > b.id ? 1 : b.id > a.id ? -1 : 0));
   if (column && column.length !== 0) {
+    let colour = sessionStorage.getItem('ColoursTurn');
+
     let newPosition = column[0]
-    let colour = localStorage.getItem('ColoursTurn');
     newPosition.style.backgroundColor = colours[colour];
 
     if (colour === 'red') {
-      localStorage.setItem('ColoursTurn', 'yellow');
+      sessionStorage.setItem('ColoursTurn', 'yellow');
     } else if (colour === 'yellow') {
-      localStorage.setItem('ColoursTurn', 'red');
+      sessionStorage.setItem('ColoursTurn', 'red');
     }
     checkBoard(newPosition.id.charAt(0), newPosition.id.charAt(1), colour)
   }
@@ -130,6 +143,21 @@ function convertRgbToHex(rgba) {
   return hex;
 }
 
+function onHover(position) {
+  console.log(position)
+  let column = position[0]
+  let hoverPiece = document.getElementById(`hover-piece-${column}`)
+  hoverPiece.style.visibility = 'visible'
+}
+
 positions.forEach((position) => {
   position.addEventListener('click', (event) => placePiece(position));
+  position.addEventListener('mouseover', (event) => onHover(position));
 });
+
+[closeButton, continueButton].forEach((button) => button.addEventListener('click', (event) => {
+  sessionStorage.setItem('ColoursTurn', 'red')
+  popupContainer.hidden = true
+  unlockBoard()
+  clearBoard()
+}))
